@@ -1,0 +1,106 @@
+﻿@page "/control"
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavigationManager
+
+
+<h3>Control</h3>
+
+
+<EditForm Model="@animales" OnValidSubmit="@Guardar">
+
+    <DataAnnotationsValidator />
+
+    <ValidationSummary/>
+
+    <div class="form-group">
+        <label for="nombre">Nombre del animal</label>
+        <InputText id="Nombre" @bind-Value="animales.nombre" class="form-control" />
+        <ValidationMessage For="() => animales.nombre" />
+    </div>
+
+   
+
+
+
+</EditForm>
+
+
+
+@if (animales1 != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Especie</th>
+                <th>Alimentacion</th>
+                <th>Tiempo de Vida</th>
+                <th>Volar</th>
+                <th>Periodo Incubacion</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var animal in animales1)
+            {
+                <tr>
+                    <td>@animal.nombre</td>
+                    <td>@animal.especie</td>
+                    <td>@animal.tipoAlimentacion</td>
+                    <td>@animal.tiempoVida</td>
+                    <td> @animal.periodo</td>
+                    
+                    
+
+                    <td>
+                        
+                    </td>
+                    <td>
+                        <button class="btn btn-warning"
+                                @onclick="@(() => NavigationManager.NavigateTo($"/control-editar/{animales.nombre}"))">
+                            Editar
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Animal animales = new Animal();
+
+    List<Animal> animales1 = new List<Animal>();
+
+
+    protected async Task Guardar()
+    {
+        animales1.Add(animales);
+        await localStorage.SetItemAsync("Animales", animales1);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        animales1 = await localStorage.GetItemAsync<List<Animal>>("Animales");
+
+        if(animales1== null)
+        {
+            animales1 = new List<Animal>();
+
+
+        }
+    }
+
+    protected async Task BorrarAnimal()
+    {
+        
+    }
+
+
+
+
+
+}
